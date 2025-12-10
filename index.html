@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NEURO CONTROL | Entrenador Virtual</title>
+    <style>
+        :root {
+            --bg-color: #050505;
+            --card-bg: #111;
+            --text-color: #e0e0e0;
+            --accent-color: #D90429; /* Rojo Marca */
+            --accent-glow: rgba(217, 4, 41, 0.3);
+            --border-color: #222;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            background-image: repeating-linear-gradient(0deg, transparent, transparent 19px, #1a1a1a 20px), repeating-linear-gradient(90deg, transparent, transparent 19px, #1a1a1a 20px);
+            background-size: 20px 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+            padding-bottom: 100px;
+        }
+
+        /* HEADER */
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 15px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: #fff;
+            margin: 0;
+            text-transform: uppercase;
+            font-weight: 900;
+            letter-spacing: 1px;
+            text-shadow: 0 0 15px var(--accent-color);
+        }
+
+        .subtitle {
+            color: var(--accent-color);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 5px;
+            font-weight: bold;
+        }
+
+        /* AUDIO EXPLICATIVO (DESTACADO) */
+        .welcome-audio {
+            background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
+            border: 1px solid var(--accent-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+        .welcome-label {
+            display: block;
+            color: #fff;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        /* CONTEXTO */
+        .context-legend {
+            background: #0f0f0f;
+            border: 1px solid #333;
+            border-left: 4px solid var(--accent-color);
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 25px;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: #ccc;
+        }
+        .context-legend strong { color: #fff; }
+
+        /* VISUALIZADOR DE ONDAS (BINAURAL) */
+        .visualizer-box {
+            height: 150px;
+            background: #000;
+            border: 2px solid #333;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.8);
+        }
+
+        .wave {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border: 2px solid var(--accent-color);
+            border-radius: 50%;
+            opacity: 0;
+            transform: scale(0.5);
+            animation: pulseWave 4s infinite linear;
+        }
+        .wave:nth-child(2) { animation-delay: 1s; }
+        .wave:nth-child(3) { animation-delay: 2s; }
+        .wave:nth-child(4) { animation-delay: 3s; }
+
+        @keyframes pulseWave {
+            0% { transform: scale(0.1); opacity: 1; }
+            100% { transform: scale(2.5); opacity: 0; }
+        }
+        
+        .hz-display {
+            position: absolute;
+            z-index: 10;
+            font-family: monospace;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 0 10px #000;
+        }
+
+        /* SELECTOR DE NIVEL */
+        .level-selector {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            background: #111;
+            padding: 5px;
+            border-radius: 8px;
+            border: 1px solid #333;
+        }
+        .level-btn {
+            background: transparent;
+            border: none;
+            color: #666;
+            padding: 12px 5px;
+            flex: 1;
+            font-weight: bold;
+            font-size: 0.75rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.3s;
+            border-radius: 6px;
+        }
+        .level-btn.active {
+            color: #fff;
+            background: var(--accent-color);
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        /* AUDIO CARD (SESIONES) */
+        .audio-section {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .track-title { font-size: 1.1rem; font-weight: bold; color: #fff; margin-bottom: 5px; display: block; }
+        .track-info { font-size: 0.8rem; color: #888; margin-bottom: 20px; display: block; }
+        
+        audio { width: 100%; height: 40px; filter: invert(0.9) hue-rotate(0deg); outline: none; }
+
+        /* DESCARGA */
+        .download-btn {
+            display: block;
+            text-align: center;
+            margin-top: 40px;
+            color: #666;
+            text-decoration: none;
+            font-size: 0.8rem;
+            border: 1px solid #333;
+            padding: 15px;
+            border-radius: 6px;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .download-btn:hover { border-color: var(--accent-color); color: #fff; }
+
+        footer { margin-top: 50px; color: #444; font-size: 0.7rem; text-align: center; }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <header>
+        <h1>NEURO CONTROL</h1>
+        <div class="subtitle">Entrenador Virtual v4.0</div>
+    </header>
+
+    <!-- AUDIO DE EXPLICACIÓN (NUEVO) -->
+    <div class="welcome-audio">
+        <span class="welcome-label">⚠️ INSTRUCCIONES DEL MECÁNICO (ESCUCHAR PRIMERO)</span>
+        <audio controls>
+            <source src="audio_explicacion.mp3" type="audio/mpeg">
+            Tu navegador no soporta audio.
+        </audio>
+    </div>
+
+    <div class="context-legend">
+        <strong>OBJETIVO:</strong> Recablear tu cerebro para disociar "Excitación" de "Eyaculación" mediante frecuencias Binaurales.
+        <br><br>
+        Usa estos audios <strong>3 veces por semana</strong>. Ponte auriculares estéreo, selecciona tu nivel y concéntrate en el sonido.
+    </div>
+
+    <!-- SELECTOR DE NIVEL -->
+    <div class="level-selector">
+        <button class="level-btn active" onclick="setLevel(1)">NIVEL 1<br>Theta (6Hz)</button>
+        <button class="level-btn" onclick="setLevel(2)">NIVEL 2<br>Alpha (10Hz)</button>
+        <button class="level-btn" onclick="setLevel(3)">NIVEL 3<br>Gamma (40Hz)</button>
+    </div>
+
+    <!-- VISUALIZADOR -->
+    <div class="visualizer-box">
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="hz-display" id="hz-display">6 Hz</div>
+    </div>
+
+    <!-- AUDIO PLAYER SESIÓN -->
+    <div class="audio-section">
+        <span class="track-title" id="track-title">FASE 1: RECONOCIMIENTO</span>
+        <span class="track-info" id="track-info">Frecuencia Theta • Relajación Profunda</span>
+        
+        <audio id="audio-player" controls>
+            <source src="audio_nivel_1.mp3" type="audio/mpeg">
+            Tu navegador no soporta audio.
+        </audio>
+        
+        <p style="font-size:0.7rem; color:#666; margin-top:15px;">
+            🎧 REQUIERE AURICULARES ESTÉREO PARA FUNCIONAR
+        </p>
+    </div>
+
+    <a href="manual_entrenador.pdf" download class="download-link">
+        📂 DESCARGAR MANUAL DE INSTRUCCIONES (PDF)
+    </a>
+
+    <footer>
+        SISTEMA CLANDESTINO<br>Neuro-Ingeniería Sexual
+    </footer>
+
+</div>
+
+<script>
+    // DATOS DE NIVELES
+    const levels = {
+        1: { hz: "6 Hz", title: "FASE 1: RECONOCIMIENTO", info: "Frecuencia Theta • Objetivo: Encontrar Nivel 7", file: "audio_nivel_1.mp3", speed: "4s" },
+        2: { hz: "10 Hz", title: "FASE 2: DOMINIO", info: "Frecuencia Alpha • Objetivo: Kegel Inverso", file: "audio_nivel_2.mp3", speed: "2s" },
+        3: { hz: "40 Hz", title: "FASE 3: MAESTRÍA", info: "Frecuencia Gamma • Objetivo: Presión Real", file: "audio_nivel_3.mp3", speed: "0.5s" }
+    };
+
+    // CAMBIAR NIVEL
+    function setLevel(lvl) {
+        // Update botones
+        document.querySelectorAll('.level-btn').forEach((b, i) => {
+            if(i === lvl-1) b.classList.add('active');
+            else b.classList.remove('active');
+        });
+
+        // Update UI
+        const data = levels[lvl];
+        document.getElementById('hz-display').innerText = data.hz;
+        document.getElementById('track-title').innerText = data.title;
+        document.getElementById('track-info').innerText = data.info;
+        
+        // Update Audio
+        const player = document.getElementById('audio-player');
+        player.src = data.file;
+        
+        // Update Animation Speed
+        document.querySelectorAll('.wave').forEach(w => {
+            w.style.animationDuration = data.speed;
+        });
+    }
+
+</script>
+
+</body>
+</html>
